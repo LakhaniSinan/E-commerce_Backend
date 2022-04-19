@@ -5,6 +5,12 @@ const Product = require("../model/product");
 router.post("/createProduct", async (req, res) => {
   const { name, image, description, price, discount, category, quantity } =
     req.body;
+  if (name == "") {
+    res.status(400).send({
+      status: "error",
+      message: "name is missing",
+    });
+  }
   try {
     const product = await Product.create({
       name,
