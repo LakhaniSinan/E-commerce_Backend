@@ -32,8 +32,13 @@ router.post("/createProduct", async (req, res) => {
 });
 
 router.get("/getProduct", async (req, res) => {
+  // const { page } = req.query;
+  console.log(req.query, "P");
+  // console.log(page,"PAGEEE");
+  let size = 5;
+  let toSkip = req.query.page * size;
   try {
-    const users = await Product.find();
+    const users = await Product.find().limit(req.query.limit).skip(toSkip)
     res.send({
       status: "ok",
       data: users,

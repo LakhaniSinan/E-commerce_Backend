@@ -9,7 +9,7 @@ const router = express.Router()
 let JWTSECRET = "MYNAMEISKHANANDIAMNOTATERRIOST"
 
 router.post("/register", async (req, res) => {
-    const { username, password, email, image, code } = req.body
+    const { username, password, email, image, code,fcm } = req.body
     if (!image || !username || !password || !email) {
         res.status(400).send({
             status: "error",
@@ -34,7 +34,8 @@ router.post("/register", async (req, res) => {
                     username,
                     password: pass,
                     email,
-                    image
+                    image,
+                    fcm
                 })
                 res.send({
                     status: "success",

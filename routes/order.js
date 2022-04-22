@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const User = require("../model/user");
 const Order = require("../model/order");
 const Product = require("../model/product");
+const { sendNotification } = require("./notification");
 
 router.post("/createOrder", async (req, res) => {
   const {
@@ -100,14 +102,18 @@ router.post("/cancelOrder", async (req, res) => {
 
 router.post("/updateOrderStatus/:id", async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body;
-  console.log(req.params, req.body, "THINGSS");
+  const { status, userId } = req.body;
+  let userDetails = await User.findOne({ _id: userId });
+  console.log(userDetails, "userDetailsuserDetails");
   try {
     let updatedStatus = await Order.findByIdAndUpdate(
       { _id: id },
       { status },
       { new: true }
     );
+    if (userDetails) {
+      sendNotification(userDetails, status);
+    }
     res.send({
       status: "ok",
       message: "Status Updated Successfully",
@@ -122,11 +128,20 @@ router.get("/getOrder/:id", async (req, res) => {
     let allOrders = await Order.find({ userId: id });
     res.send({
       status: "ok",
-      data:allOrders,
+      data: allOrders,
     });
-  } catch (error) {
+  } catch (error) {}
+});
 
-  }
+router.get("/getAllOrder", async (req, res) => {
+  // sendNotification()
+  try {
+    let allOrders = await Order.find();
+    res.send({
+      status: "ok",
+      data: allOrders,
+    });
+  } catch (error) {}
 });
 
 // router.get("/getCategory", async (req, res) => {
